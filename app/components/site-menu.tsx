@@ -27,7 +27,7 @@ const MenuButton = forwardRef<
     <button
       ref={ref}
       type="button"
-      className={`inline-flex cursor-pointer items-center gap-2.5 text-sm text-zinc-400 outline-none transition-colors hover:text-zinc-200 focus-visible:text-zinc-200 ${className ?? ""}`}
+      className={`inline-flex cursor-pointer items-center gap-2 text-md text-zinc-400 outline-none transition-colors hover:text-zinc-200 focus-visible:text-zinc-200 ${className ?? ""}`}
       aria-label={open ? "Close menu" : "Open menu"}
       aria-expanded={open}
       aria-controls="site-menu-panel"
@@ -68,13 +68,12 @@ export function SiteMenu() {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.35, ease: menuEase }}
-            className="overflow-hidden border-t border-zinc-800/80"
+            className="overflow-hidden border-t border-zinc-800/80 pt-4"
           >
             <nav aria-label="Site navigation">
               {navLinks.map(({ href, label }, index) => (
                 <motion.div
                   key={label}
-                  className="border-b border-zinc-800/80"
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -6 }}
@@ -88,7 +87,7 @@ export function SiteMenu() {
                     <Link
                       href={href}
                       onClick={() => setOpen(false)}
-                      className="block py-4 text-right text-sm text-zinc-300 transition-colors hover:text-zinc-50"
+                      className="block py-2 text-right text-md text-zinc-300 transition-colors hover:text-zinc-50 border-b border-zinc-800/80"
                     >
                       {label}
                     </Link>
@@ -104,7 +103,7 @@ export function SiteMenu() {
         <div className="mx-auto flex w-full max-w-4xl items-center justify-between py-4">
           <Link
             href="/"
-            className="text-sm text-zinc-400 transition-colors hover:text-zinc-200"
+            className="text-md text-zinc-400 transition-colors hover:text-zinc-200"
           >
             {SITE_TITLE}
           </Link>
