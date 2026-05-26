@@ -22,13 +22,17 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="hidden flex-col gap-8 sm:flex sm:justify-self-end">
-            <Image
-              src="/vercel.svg"
-              alt="Ziady Mubaraq"
-              width={100}
-              height={100}
-            />
+          <div className="hidden flex-col sm:flex sm:justify-self-end">
+            <div className="relative h-[120px] w-[120px] overflow-hidden rounded-2xl border border-border-tertiary mb-4">
+              <Image
+                src="/avatar.webp"
+                alt="Ziady Mubaraq"
+                fill
+                sizes="120px"
+                className="object-cover"
+                priority
+              />
+            </div>
             <AboutSection />
           </div>
 

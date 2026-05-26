@@ -82,7 +82,7 @@ export function SiteMenu() {
                     ease: menuEase,
                   }}
                 >
-                  <div className="mx-auto w-full max-w-3xl">
+                  <div className="mx-auto w-full max-w-3xl px-4 md:px-0">
                     <Link
                       href={href}
                       onClick={() => setOpen(false)}
