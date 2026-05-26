@@ -5,7 +5,7 @@ import { Menu, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { forwardRef, useEffect, useState } from "react";
 
-const SITE_TITLE = "@itsz";
+const SITE_TITLE = "@ziadymubaraq";
 
 const navLinks = [
   { href: "/proficiencies", label: "Proficiencies" },
@@ -27,7 +27,7 @@ const MenuButton = forwardRef<
     <button
       ref={ref}
       type="button"
-      className={`inline-flex cursor-pointer items-center gap-2 text-md text-zinc-400 outline-none transition-colors hover:text-zinc-200 focus-visible:text-zinc-200 ${className ?? ""}`}
+      className={`inline-flex cursor-pointer items-center gap-2 text-md text-foreground-secondary outline-none transition-colors hover:text-foreground-primary focus-visible:text-foreground-primary ${className ?? ""}`}
       aria-label={open ? "Close menu" : "Open menu"}
       aria-expanded={open}
       aria-controls="site-menu-panel"
@@ -58,7 +58,7 @@ export function SiteMenu() {
   }, [open]);
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-[#141413]">
+    <header className="sticky top-0 z-50 w-full bg-background-primary">
       <AnimatePresence initial={false}>
         {open && (
           <motion.div
@@ -68,26 +68,25 @@ export function SiteMenu() {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.35, ease: menuEase }}
-            className="overflow-hidden border-t border-zinc-800/80 pt-4"
+            className="box-border overflow-hidden border-t border-border-tertiary"
           >
-            <nav aria-label="Site navigation">
+            <nav aria-label="Site navigation" className="pt-4">
               {navLinks.map(({ href, label }, index) => (
                 <motion.div
                   key={label}
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -6 }}
                   transition={{
                     duration: 0.35,
                     delay: 0.04 + index * 0.04,
                     ease: menuEase,
                   }}
                 >
-                  <div className="mx-auto w-full max-w-4xl">
+                  <div className="mx-auto w-full max-w-3xl">
                     <Link
                       href={href}
                       onClick={() => setOpen(false)}
-                      className="block py-2 text-right text-md text-zinc-300 transition-colors hover:text-zinc-50 border-b border-zinc-800/80"
+                      className="block border-b border-border-tertiary py-2 text-right text-md text-foreground-secondary transition-colors hover:text-foreground-primary"
                     >
                       {label}
                     </Link>
@@ -99,11 +98,11 @@ export function SiteMenu() {
         )}
       </AnimatePresence>
 
-      <div className="border-b border-zinc-800/80">
-        <div className="mx-auto flex w-full max-w-4xl items-center justify-between py-4">
+      <div className="border-b border-border-tertiary">
+        <div className="mx-auto flex w-full max-w-3xl items-center justify-between py-4 px-4 md:px-0">
           <Link
             href="/"
-            className="text-md text-zinc-400 transition-colors hover:text-zinc-200"
+            className="text-md text-foreground-secondary transition-colors hover:text-foreground-primary"
           >
             {SITE_TITLE}
           </Link>
