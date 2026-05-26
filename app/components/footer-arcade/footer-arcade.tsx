@@ -11,6 +11,7 @@ import {
   Triangle,
   Zap,
 } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   COLOR_PALETTE,
@@ -24,7 +25,7 @@ import {
   findBestMove,
   getColumnsForWidth,
   pickPair,
-} from "./game";
+} from "./engine";
 
 const GLYPHS: { id: string; Icon: LucideIcon; className?: string }[] = [
   { id: "triangle", Icon: Triangle, className: "rotate-180" },
@@ -67,6 +68,7 @@ function GlyphIcon({
 export function FooterArcade() {
   const [columns, setColumns] = useState(DESKTOP_COLUMNS);
   const [board, setBoard] = useState<Board>(() => createBoard(DESKTOP_COLUMNS));
+  const [boardKey, setBoardKey] = useState(0);
   const [currentPlayer, setCurrentPlayer] = useState<Player>("player");
   const [gameActive, setGameActive] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -74,25 +76,16 @@ export function FooterArcade() {
   const [hoverCol, setHoverCol] = useState<number | null>(null);
   const [winningCells, setWinningCells] = useState<[number, number][]>([]);
   const [resultMessage, setResultMessage] = useState<string | null>(null);
-  const [playerGlyph, setPlayerGlyph] = useState(GLYPHS[0]);
-  const [computerGlyph, setComputerGlyph] = useState(GLYPHS[1]);
-  const [playerColor, setPlayerColor] = useState<string>(COLOR_PALETTE[0]);
-  const [computerColor, setComputerColor] = useState<string>(COLOR_PALETTE[1]);
-  const [falling, setFalling] = useState<{
-    col: number;
-    row: number;
-    player: Player;
-  } | null>(null);
+  const [[playerGlyph, computerGlyph], setGlyphs] = useState(() => pickPair(GLYPHS));
+  const [[playerColor, computerColor], setColors] = useState(() => pickPair(COLOR_PALETTE));
   const boardRef = useRef(board);
 
   boardRef.current = board;
 
   const startGame = useCallback((nextColumns: number) => {
-    const [nextPlayerGlyph, nextComputerGlyph] = pickPair(GLYPHS);
-    const [nextPlayerColor, nextComputerColor] = pickPair(COLOR_PALETTE);
-
     setColumns(nextColumns);
     setBoard(createBoard(nextColumns));
+    setBoardKey((k) => k + 1);
     setCurrentPlayer("player");
     setGameActive(true);
     setIsProcessing(false);
@@ -100,11 +93,8 @@ export function FooterArcade() {
     setHoverCol(null);
     setWinningCells([]);
     setResultMessage(null);
-    setFalling(null);
-    setPlayerGlyph(nextPlayerGlyph);
-    setComputerGlyph(nextComputerGlyph);
-    setPlayerColor(nextPlayerColor);
-    setComputerColor(nextComputerColor);
+    setGlyphs(pickPair(GLYPHS));
+    setColors(pickPair(COLOR_PALETTE));
   }, []);
 
   useEffect(() => {
@@ -137,57 +127,35 @@ export function FooterArcade() {
       const { board: nextBoard, row } = dropPiece(currentBoard, col, player);
       if (row === -1) return;
 
-      setMoveCount((count) => count + 1);
+      setMoveCount((c) => c + 1);
+      boardRef.current = nextBoard;
+      setBoard(nextBoard);
 
-      let step = 0;
-      const animateDrop = () => {
-        setFalling({ col, row: step, player });
-
-        if (step < row) {
-          step += 1;
-          window.setTimeout(animateDrop, 120);
+      window.setTimeout(() => {
+        const win = checkWin(nextBoard, row, col);
+        if (win.won) {
+          endGame(player === "player" ? "You win!" : "CPU wins.", win.cells);
           return;
         }
 
-        boardRef.current = nextBoard;
-        setBoard(nextBoard);
-        setFalling(null);
+        if (checkDraw(nextBoard)) {
+          endGame("Draw.", []);
+          return;
+        }
 
-        window.setTimeout(() => {
-          const win = checkWin(nextBoard, row, col);
-          if (win.won) {
-            endGame(
-              player === "player" ? "You win!" : "CPU wins.",
-              win.cells,
-            );
-            return;
-          }
+        const next: Player = player === "player" ? "computer" : "player";
+        setCurrentPlayer(next);
 
-          if (checkDraw(nextBoard)) {
-            endGame("Draw.", []);
-            return;
-          }
-
-          const nextPlayer: Player =
-            player === "player" ? "computer" : "player";
-          setCurrentPlayer(nextPlayer);
-
-          if (nextPlayer === "computer") {
-            window.setTimeout(() => {
-              const cpuCol = findBestMove(boardRef.current);
-              if (cpuCol !== -1) {
-                applyMove(cpuCol, "computer");
-              } else {
-                setIsProcessing(false);
-              }
-            }, 500);
-          } else {
-            setIsProcessing(false);
-          }
-        }, 100);
-      };
-
-      animateDrop();
+        if (next === "computer") {
+          window.setTimeout(() => {
+            const cpuCol = findBestMove(boardRef.current);
+            if (cpuCol !== -1) applyMove(cpuCol, "computer");
+            else setIsProcessing(false);
+          }, 300);
+        } else {
+          setIsProcessing(false);
+        }
+      }, 280);
     },
     [endGame],
   );
@@ -203,47 +171,73 @@ export function FooterArcade() {
     [winningCells],
   );
 
-  const activeGlyph =
-    currentPlayer === "player" ? playerGlyph : computerGlyph;
-  const activeColor =
-    currentPlayer === "player" ? playerColor : computerColor;
+  const activeGlyph = currentPlayer === "player" ? playerGlyph : computerGlyph;
+  const activeColor = currentPlayer === "player" ? playerColor : computerColor;
 
   return (
-    <section className="w-full border-t border-border-tertiary pt-10">
-      <h2 className="text-center font-serif font-medium text-3xl text-foreground-primary py-12">
+    <section className="w-full pt-10">
+      <h2 className="py-12 text-center font-serif text-3xl font-medium text-foreground-primary">
         Footer arcade
       </h2>
 
       <div className="mt-6 flex items-center justify-between gap-4">
-        {resultMessage ? (
-          <button
-            type="button"
-            onClick={() => startGame(columns)}
-            className="rounded-full border border-border-primary px-4 py-2 text-md text-foreground-primary transition-colors hover:bg-background-secondary cursor-pointer"
-          >
-            {resultMessage} Play again
-          </button>
-        ) : (
-          <p className="flex items-center gap-2 text-md text-foreground-primary">
-            <span>
-              {currentPlayer === "player" ? "Your turn" : "CPU's turn"}
-            </span>
-            {gameActive && (
-              <GlyphIcon glyph={activeGlyph} color={activeColor} size={10} />
-            )}
-          </p>
-        )}
+        <AnimatePresence mode="wait">
+          {resultMessage ? (
+            <motion.button
+              key="result"
+              type="button"
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              onClick={() => startGame(columns)}
+              className="cursor-pointer rounded-full border border-button-tertiary-border-hover px-4 py-2 text-md text-foreground-primary transition-colors hover:bg-background-secondary"
+            >
+              {resultMessage} Play again
+            </motion.button>
+          ) : (
+            <div key="status" className="overflow-hidden">
+              <AnimatePresence mode="popLayout" initial={false}>
+                <motion.p
+                  key={currentPlayer}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.16, ease: "easeOut" }}
+                  className="flex items-center gap-2 text-md text-foreground-primary"
+                >
+                  <span>{currentPlayer === "player" ? "Your turn" : "CPU's turn"}</span>
+                  {gameActive && (
+                    <GlyphIcon glyph={activeGlyph} color={activeColor} size={10} />
+                  )}
+                </motion.p>
+              </AnimatePresence>
+            </div>
+          )}
+        </AnimatePresence>
 
         <div className="flex items-center gap-2 text-md text-foreground-primary">
           <span>Moves</span>
-          <span className="min-w-8 rounded-md border border-border-secondary px-2 py-0.5 text-center text-foreground-primary tabular-nums">
-            {moveCount.toString().padStart(2, "0")}
-          </span>
+          <div className="relative min-w-8 overflow-hidden rounded-md border border-button-secondary-border px-2 py-0.5 text-center tabular-nums">
+            <AnimatePresence mode="popLayout">
+              <motion.span
+                key={moveCount}
+                initial={{ y: "100%", opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: "-100%", opacity: 0 }}
+                transition={{ duration: 0.18, ease: "easeOut" }}
+                className="block text-foreground-primary"
+              >
+                {moveCount.toString().padStart(2, "0")}
+              </motion.span>
+            </AnimatePresence>
+          </div>
         </div>
       </div>
 
       <div
-        className="mt-4 grid gap-2"
+        key={boardKey}
+        className="mt-4 grid gap-2 overflow-hidden"
         style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
         onMouseLeave={() => setHoverCol(null)}
       >
@@ -255,14 +249,7 @@ export function FooterArcade() {
             let glyph: GlyphConfig | null = null;
             let color = "";
 
-            if (
-              falling &&
-              falling.col === colIndex &&
-              falling.row === rowIndex
-            ) {
-              glyph = falling.player === "player" ? playerGlyph : computerGlyph;
-              color = falling.player === "player" ? playerColor : computerColor;
-            } else if (cell === "player") {
+            if (cell === "player") {
               glyph = playerGlyph;
               color = playerColor;
             } else if (cell === "computer") {
@@ -271,30 +258,59 @@ export function FooterArcade() {
             }
 
             return (
-              <button
+              <motion.button
                 key={`${rowIndex}-${colIndex}`}
                 type="button"
                 disabled={!gameActive || isProcessing}
                 onMouseEnter={() => setHoverCol(colIndex)}
                 onClick={() => handleColumnClick(colIndex)}
-                className="relative aspect-square rounded-md transition-[background-color,opacity] disabled:cursor-default cursor-pointer"
-                style={{
+                className="relative aspect-square cursor-pointer rounded-md disabled:cursor-default"
+                animate={{
                   backgroundColor: isHovered
                     ? "#555"
                     : isWinning
                       ? WINNING_CELL
                       : EMPTY_CELL,
-                  opacity: 1,
+                  scale: isWinning ? [1, 1.06, 1] : 1,
                 }}
-
+                transition={{
+                  backgroundColor: { duration: 0.1, ease: "easeOut" },
+                  scale: isWinning
+                    ? { duration: 0.45, ease: "easeOut", delay: 0.05 }
+                    : { duration: 0.1 },
+                }}
+                whileTap={gameActive && !isProcessing ? { scale: 0.9 } : undefined}
                 aria-label={`Column ${colIndex + 1}, row ${rowIndex + 1}`}
               >
-                {glyph && (
-                  <span className="absolute inset-0 flex items-center justify-center">
-                    <GlyphIcon glyph={glyph} color={color} size={18} />
-                  </span>
-                )}
-              </button>
+                <AnimatePresence>
+                  {glyph && (
+                    <motion.span
+                      key={`glyph-${rowIndex}-${colIndex}`}
+                      className="pointer-events-none absolute inset-0 flex items-center justify-center"
+                      initial={{ y: `-${(rowIndex + 1) * 100}%`, opacity: 0 }}
+                      animate={
+                        isWinning
+                          ? { y: 0, opacity: 1, scale: [1, 1.18, 0.94, 1.06, 1] }
+                          : { y: 0, opacity: 1, scale: 1 }
+                      }
+                      transition={
+                        isWinning
+                          ? {
+                            y: { type: "spring", stiffness: 600, damping: 38 },
+                            opacity: { duration: 0.08 },
+                            scale: { duration: 0.55, ease: "easeOut", delay: 0.05 },
+                          }
+                          : {
+                            y: { type: "spring", stiffness: 550, damping: 36, mass: 1.1 },
+                            opacity: { duration: 0.08 },
+                          }
+                      }
+                    >
+                      <GlyphIcon glyph={glyph} color={color} size={18} />
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </motion.button>
             );
           }),
         )}

@@ -1,9 +1,7 @@
-import { div } from "motion/react-client"
-
 export function AboutSection() {
   return (
     <>
-      <div className="grid grid-cols-2 gap-4 border-b border-border-tertiary pb-4">
+      <div className="grid grid-cols-2 gap-4 border-b border-button-secondary-background pb-4">
         <div>
           <h2 className="text-md font-medium text-foreground-primary">About</h2>
         </div>

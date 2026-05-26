@@ -8,13 +8,11 @@ import { forwardRef, useEffect, useState } from "react";
 const SITE_TITLE = "@ziadyjo";
 
 const navLinks = [
-  { href: "/proficiencies", label: "Proficiencies" },
-  { href: "/work", label: "Work" },
-  { href: "/education", label: "Education" },
-  { href: "/certificates", label: "Certificates" },
-  { href: "/projects", label: "Projects" },
-  { href: "/contact", label: "Contact" },
-  { href: "/", label: "Back Home" },
+  { href: "#proficiencies", label: "Proficiencies" },
+  { href: "#work", label: "Work" },
+  { href: "#certificates", label: "Certificates" },
+  { href: "#projects", label: "Projects" },
+  { href: "#contact", label: "Contact" },
 ] as const;
 
 const menuEase = [0.22, 1, 0.36, 1] as const;
@@ -68,7 +66,7 @@ export function SiteMenu() {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.35, ease: menuEase }}
-            className="box-border overflow-hidden border-t border-border-tertiary"
+            className="box-border overflow-hidden border-t border-button-secondary-background"
           >
             <nav aria-label="Site navigation" className="pt-4">
               {navLinks.map(({ href, label }, index) => (
@@ -82,11 +80,11 @@ export function SiteMenu() {
                     ease: menuEase,
                   }}
                 >
-                  <div className="mx-auto w-full max-w-3xl px-4 md:px-0">
+                  <div className="mx-auto w-full max-w-3xl px-10 md:px-0">
                     <Link
                       href={href}
                       onClick={() => setOpen(false)}
-                      className="block border-b border-border-tertiary py-2 text-right text-md text-foreground-secondary transition-colors hover:text-foreground-primary"
+                      className="block border-b border-button-secondary-background py-2 text-right text-md text-foreground-secondary transition-colors hover:text-foreground-primary"
                     >
                       {label}
                     </Link>
@@ -98,8 +96,8 @@ export function SiteMenu() {
         )}
       </AnimatePresence>
 
-      <div className="border-b border-border-tertiary">
-        <div className="mx-auto flex w-full max-w-3xl items-center justify-between py-4 px-4 md:px-0">
+      <div className="border-b border-button-secondary-background">
+        <div className="mx-auto flex w-full max-w-3xl items-center justify-between py-4 px-10 md:px-0">
           <Link
             href="/"
             className="text-md text-foreground-secondary transition-colors hover:text-foreground-primary"

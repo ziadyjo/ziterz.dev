@@ -211,7 +211,11 @@ export function findBestMove(board: Board) {
   return -1;
 }
 
-export function pickPair<T>(items: readonly T[]) {
-  const shuffled = [...items].sort(() => Math.random() - 0.5);
-  return [shuffled[0], shuffled[1]] as const;
+export function pickPair<T>(items: readonly T[]): readonly [T, T] {
+  const arr = [...items];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return [arr[0], arr[1]] as const;
 }
