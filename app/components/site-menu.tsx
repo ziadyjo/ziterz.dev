@@ -9,7 +9,6 @@ import { forwardRef, useEffect, useRef, useState } from "react";
 const SITE_TITLE = "@ziadyjo";
 
 const navLinks = [
-  { href: "#proficiencies", label: "Proficiencies" },
   { href: "#work", label: "Work" },
   { href: "#education", label: "Education" },
   { href: "#projects", label: "Projects" },

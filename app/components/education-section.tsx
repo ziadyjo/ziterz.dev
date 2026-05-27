@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
+import { CalendarDays, GraduationCap, MapPin } from "lucide-react";
 
 type Education = {
   degree: string;
@@ -21,7 +22,7 @@ const EDUCATION: Education[] = [
   },
   {
     degree: "BSc in Computer Science",
-    period: "2015",
+    period: "2019",
     institution: "Indonesia University of Education",
     location: "Indonesia",
     description:
@@ -54,7 +55,7 @@ function EducationItem({
   return (
     <article className="flex flex-col gap-3 py-6 first:pt-0">
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-        <h4 className="text-xl font-medium text-foreground-primary">{degree}</h4>
+        <h4 className="text-lg text-foreground-primary">{degree}</h4>
       </div>
 
       <dl className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-foreground-tertiary">

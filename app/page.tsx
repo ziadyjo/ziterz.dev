@@ -9,6 +9,7 @@ import { EducationSection } from "./components/education-section";
 import { FooterArcade } from "./components/footer-arcade";
 import { ProjectsSection } from "./components/projects-section";
 import { SiteMenu } from "./components/site-menu";
+import { WorkSection } from "./components/work-section";
 
 const contactLinkClass =
   "inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-foreground-tertiary transition-colors hover:bg-background-tertiary hover:text-foreground-primary";
@@ -108,20 +109,14 @@ export default function Home() {
             </motion.div>
           </div>
 
-          {/* Proficiencies */}
-          <motion.div id="proficiencies" variants={fadeUp} className="scroll-mt-20 flex flex-col gap-4 sm:grid sm:grid-cols-2 sm:items-start sm:gap-x-8 py-16">
-            <div className="sm:sticky sm:top-20 sm:self-start">
-              <h3 className="text-3xl font-medium">Proficiencies</h3>
-            </div>
-            <div>B</div>
-          </motion.div>
-
           {/* Work */}
           <motion.div id="work" variants={fadeUp} className="scroll-mt-20 flex flex-col gap-4 sm:grid sm:grid-cols-2 sm:items-start sm:gap-x-8 py-16">
             <div className="sm:sticky sm:top-20 sm:self-start">
               <h3 className="text-3xl font-medium">Work</h3>
             </div>
-            <div>B</div>
+            <div>
+              <WorkSection />
+            </div>
           </motion.div>
 
           {/* Education */}

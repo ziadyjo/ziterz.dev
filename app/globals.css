@@ -71,6 +71,9 @@
   --button-tertiary-border-hover: #5e5d59;
   --button-tertiary-icon-hover: #faf9f5;
 
+  --accent-background: #3a2318;
+  --accent-text: #d97757;
+
   --font-sans-stack: "Anthropic Sans", system-ui, sans-serif;
   --font-serif-stack: "Anthropic Serif", Georgia, serif;
 }
@@ -109,6 +112,9 @@
   --color-button-tertiary-text-hover: var(--button-tertiary-text-hover);
   --color-button-tertiary-border-hover: var(--button-tertiary-border-hover);
   --color-button-tertiary-icon-hover: var(--button-tertiary-icon-hover);
+
+  --color-accent-background: var(--accent-background);
+  --color-accent-text: var(--accent-text);
 
   --font-sans: var(--font-sans-stack);
   --font-serif: var(--font-serif-stack);
