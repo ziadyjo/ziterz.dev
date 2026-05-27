@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRight, Heart } from "lucide-react";
 import { motion, type Variants } from "motion/react";
 import { AboutSection } from "./components/about-section";
+import { EducationSection } from "./components/education-section";
 import { FooterArcade } from "./components/footer-arcade";
 import { ProjectsSection } from "./components/projects-section";
 import { SiteMenu } from "./components/site-menu";
@@ -108,32 +109,34 @@ export default function Home() {
           </div>
 
           {/* Proficiencies */}
-          <motion.div variants={fadeUp} className="flex flex-col gap-4 sm:grid sm:grid-cols-2 sm:items-start sm:gap-x-8 py-16">
-            <div id="proficiencies" className="scroll-mt-20 sm:sticky sm:top-20 sm:self-start">
+          <motion.div id="proficiencies" variants={fadeUp} className="scroll-mt-20 flex flex-col gap-4 sm:grid sm:grid-cols-2 sm:items-start sm:gap-x-8 py-16">
+            <div className="sm:sticky sm:top-20 sm:self-start">
               <h3 className="text-3xl font-medium">Proficiencies</h3>
             </div>
             <div>B</div>
           </motion.div>
 
           {/* Work */}
-          <motion.div variants={fadeUp} className="flex flex-col gap-4 sm:grid sm:grid-cols-2 sm:items-start sm:gap-x-8 py-16">
-            <div id="work" className="scroll-mt-20 sm:sticky sm:top-20 sm:self-start">
+          <motion.div id="work" variants={fadeUp} className="scroll-mt-20 flex flex-col gap-4 sm:grid sm:grid-cols-2 sm:items-start sm:gap-x-8 py-16">
+            <div className="sm:sticky sm:top-20 sm:self-start">
               <h3 className="text-3xl font-medium">Work</h3>
             </div>
             <div>B</div>
           </motion.div>
 
-          {/* Certificates */}
-          <motion.div variants={fadeUp} className="flex flex-col gap-4 sm:grid sm:grid-cols-2 sm:items-start sm:gap-x-8 py-16">
-            <div id="certificates" className="scroll-mt-20 sm:sticky sm:top-20 sm:self-start">
-              <h3 className="text-3xl font-medium">Certificates</h3>
+          {/* Education */}
+          <motion.div id="education" variants={fadeUp} className="scroll-mt-20 flex flex-col gap-4 sm:grid sm:grid-cols-2 sm:items-start sm:gap-x-8 py-16">
+            <div className="sm:sticky sm:top-20 sm:self-start">
+              <h3 className="text-3xl font-medium">Education</h3>
             </div>
-            <div>B</div>
+            <div>
+              <EducationSection />
+            </div>
           </motion.div>
 
           {/* Projects */}
-          <motion.div variants={fadeUp} className="flex flex-col gap-4 sm:grid sm:grid-cols-2 sm:items-start sm:gap-x-8 py-16">
-            <div id="projects" className="scroll-mt-20 sm:sticky sm:top-20 sm:self-start">
+          <motion.div id="projects" variants={fadeUp} className="scroll-mt-20 flex flex-col gap-4 sm:grid sm:grid-cols-2 sm:items-start sm:gap-x-8 py-16">
+            <div className="sm:sticky sm:top-20 sm:self-start">
               <h3 className="text-3xl font-medium">Projects</h3>
             </div>
             <div>
@@ -142,8 +145,8 @@ export default function Home() {
           </motion.div>
 
           {/* Contact */}
-          <motion.div variants={fadeUp} className="flex flex-col gap-4 sm:grid sm:grid-cols-2 sm:items-start sm:gap-x-8 py-16 border-b border-button-secondary-background">
-            <div id="contact" className="scroll-mt-20 sm:sticky sm:top-20 sm:self-start">
+          <motion.div id="contact" variants={fadeUp} className="scroll-mt-20 flex flex-col gap-4 sm:grid sm:grid-cols-2 sm:items-start sm:gap-x-8 py-16 border-b border-button-secondary-background">
+            <div className="sm:sticky sm:top-20 sm:self-start">
               <h3 className="text-3xl font-medium">Contact</h3>
             </div>
             <ul className="flex flex-col gap-1">

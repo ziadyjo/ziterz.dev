@@ -76,11 +76,22 @@ export function FooterArcade() {
   const [hoverCol, setHoverCol] = useState<number | null>(null);
   const [winningCells, setWinningCells] = useState<[number, number][]>([]);
   const [resultMessage, setResultMessage] = useState<string | null>(null);
-  const [[playerGlyph, computerGlyph], setGlyphs] = useState(() => pickPair(GLYPHS));
-  const [[playerColor, computerColor], setColors] = useState(() => pickPair(COLOR_PALETTE));
+  // Seed deterministically so SSR and the first client render agree; the
+  // random pair is chosen after mount in the effect below.
+  const [[playerGlyph, computerGlyph], setGlyphs] = useState<
+    readonly [GlyphConfig, GlyphConfig]
+  >(() => [GLYPHS[0], GLYPHS[1]]);
+  const [[playerColor, computerColor], setColors] = useState<
+    readonly [string, string]
+  >(() => [COLOR_PALETTE[0], COLOR_PALETTE[1]]);
   const boardRef = useRef(board);
 
   boardRef.current = board;
+
+  useEffect(() => {
+    setGlyphs(pickPair(GLYPHS));
+    setColors(pickPair(COLOR_PALETTE));
+  }, []);
 
   const startGame = useCallback((nextColumns: number) => {
     setColumns(nextColumns);

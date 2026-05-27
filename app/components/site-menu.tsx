@@ -1,18 +1,20 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { forwardRef, useEffect, useState } from "react";
+import { forwardRef, useEffect, useRef, useState } from "react";
 
 const SITE_TITLE = "@ziadyjo";
 
 const navLinks = [
   { href: "#proficiencies", label: "Proficiencies" },
   { href: "#work", label: "Work" },
-  { href: "#certificates", label: "Certificates" },
+  { href: "#education", label: "Education" },
   { href: "#projects", label: "Projects" },
   { href: "#contact", label: "Contact" },
+  { href: "/", label: "Back Home" },
 ] as const;
 
 const menuEase = [0.22, 1, 0.36, 1] as const;
@@ -42,7 +44,48 @@ const MenuButton = forwardRef<
 });
 
 export function SiteMenu() {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
+  // Set while a nav link is closing the menu, so the panel collapses
+  // instantly (no animation). That lets the page settle to its real
+  // layout in one frame, after which we scroll to the section.
+  const [closingForNav, setClosingForNav] = useState(false);
+  // Hash to scroll to once the panel has fully collapsed (see onExitComplete).
+  const pendingHash = useRef<string | null>(null);
+
+  function handleNavClick(
+    event: React.MouseEvent<HTMLAnchorElement>,
+    href: string,
+  ) {
+    event.preventDefault();
+
+    // Non-hash links (e.g. "Back Home") are real route changes — navigate
+    // there and drop any "#section" left in the URL.
+    if (!href.startsWith("#")) {
+      setOpen(false);
+      router.push(href);
+      return;
+    }
+
+    // Collapse instantly, then scroll from onExitComplete — once the panel
+    // is gone and the layout has settled, so the scroll isn't canceled.
+    pendingHash.current = href;
+    setClosingForNav(true);
+    setOpen(false);
+  }
+
+  function handleExitComplete() {
+    setClosingForNav(false);
+    const href = pendingHash.current;
+    if (!href) return;
+    pendingHash.current = null;
+
+    const target = document.getElementById(href.replace("#", ""));
+    if (!target) return;
+
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+    history.replaceState(null, "", href);
+  }
 
   useEffect(() => {
     if (!open) return;
@@ -57,46 +100,50 @@ export function SiteMenu() {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-background-primary">
-      <AnimatePresence initial={false}>
-        {open && (
-          <motion.div
-            id="site-menu-panel"
-            key="site-menu-panel"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.35, ease: menuEase }}
-            className="box-border overflow-hidden border-t border-button-secondary-background"
-          >
-            <nav aria-label="Site navigation" className="pt-4">
-              {navLinks.map(({ href, label }, index) => (
-                <motion.div
-                  key={label}
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{
-                    duration: 0.35,
-                    delay: 0.04 + index * 0.04,
-                    ease: menuEase,
-                  }}
-                >
-                  <div className="mx-auto w-full max-w-3xl px-10 md:px-0">
-                    <Link
-                      href={href}
-                      onClick={() => setOpen(false)}
-                      className="block border-b border-button-secondary-background py-2 text-right text-md text-foreground-secondary transition-colors hover:text-foreground-primary"
-                    >
-                      {label}
-                    </Link>
-                  </div>
-                </motion.div>
-              ))}
-            </nav>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       <div className="border-b border-button-secondary-background">
+        {/* In-flow panel above the bar: opening pushes the @ziadyjo / Menu
+            bar down to the bottom of the navbar. */}
+        <AnimatePresence initial={false} onExitComplete={handleExitComplete}>
+          {open && (
+            <motion.div
+              id="site-menu-panel"
+              key="site-menu-panel"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: closingForNav ? 0 : 0.2, ease: menuEase }}
+              className="w-full overflow-hidden"
+            >
+              <nav aria-label="Site navigation" className="pt-4">
+                {navLinks.map(({ href, label }, index) => (
+                  <motion.div
+                    key={label}
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      duration: 0.35,
+                      ease: menuEase,
+                    }}
+                  >
+                    <div className="mx-auto w-full max-w-3xl px-10 md:px-0">
+                      <a
+                        href={href}
+                        onClick={(event) => handleNavClick(event, href)}
+                        className={`block py-2 text-right text-md text-foreground-secondary transition-colors hover:text-foreground-primary ${index < navLinks.length - 1
+                          ? "border-b border-button-secondary-background"
+                          : ""
+                          }`}
+                      >
+                        {label}
+                      </a>
+                    </div>
+                  </motion.div>
+                ))}
+              </nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <div className="mx-auto flex w-full max-w-3xl items-center justify-between py-4 px-10 md:px-0">
           <Link
             href="/"
