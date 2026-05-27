@@ -9,14 +9,14 @@ export function About() {
         <h2 className="text-base font-medium text-foreground-primary">About</h2>
         <ul>
           {facts.map((fact) => (
-            <li key={fact} className="text-foreground-tertiary">
+            <li key={fact} className="text-base text-foreground-tertiary">
               {fact}
             </li>
           ))}
         </ul>
       </div>
       {bio.map((paragraph) => (
-        <p key={paragraph} className="pt-4 text-foreground-tertiary">
+        <p key={paragraph} className="pt-4 text-base text-foreground-tertiary">
           {paragraph}
         </p>
       ))}

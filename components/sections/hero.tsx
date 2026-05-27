@@ -12,7 +12,7 @@ export function Hero() {
   return (
     <div className="flex flex-col gap-8 sm:grid sm:grid-cols-2 sm:items-start">
       <motion.div variants={fadeUp}>
-        <h1 className="font-serif text-5xl font-medium text-foreground-primary">
+        <h1 className="font-serif text-4xl sm:text-5xl font-medium text-foreground-primary">
           <span className="block whitespace-nowrap sm:hidden">{fullName}</span>
           <span className="hidden sm:block">{firstName}</span>
           <span className="hidden sm:block">{lastName}</span>
